@@ -3,6 +3,7 @@ import Footer from "@/Components/UI/Footer/Footer";
 import GetFreeMovingQuotePage from "@/Components/Pages/GetFreeMovingQuotePage/GetFreeMovingQuotePage";
 import RegularProcess from "@/Components/UI/Layout/Sections/Process/RegularProcess";
 import LocationsCovered from "@/Components/UI/LocationsCovered/LocationsCovered";
+import GallerySection from "@/Components/UI/Gallery/GallerySection";
 import styles from "@/Components/Pages/GetFreeMovingQuotePage/GetFreeMovingQuotePage.module.scss";
 
 const cityName = "Palmerston North";
@@ -28,7 +29,7 @@ const landingPageContent = {
       body: "Professional team, transparent pricing, and no hidden costs. Get a response within 15 minutes.",
     },
     features: [
-      "2 Men + Truck | $65/hr",
+      "2 Men + Truck",
       "No depot fee, pay on arrival",
       "Packing & unpacking available",
       "We can beat any quote by 10%",
@@ -161,6 +162,7 @@ export default function Page() {
         <GetFreeMovingQuotePage content={landingPageContent.hero} />
         <RegularProcess {...landingPageContent.process} />
         <LocationsCovered {...landingPageContent.locations} />
+        <GallerySection cityName={cityName} />
       </main>
       <Footer showFooterCta={false} content={landingPageContent.footer} />
     </div>

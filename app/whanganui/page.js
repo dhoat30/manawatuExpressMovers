@@ -3,6 +3,7 @@ import Footer from "@/Components/UI/Footer/Footer";
 import GetFreeMovingQuotePage from "@/Components/Pages/GetFreeMovingQuotePage/GetFreeMovingQuotePage";
 import RegularProcess from "@/Components/UI/Layout/Sections/Process/RegularProcess";
 import LocationsCovered from "@/Components/UI/LocationsCovered/LocationsCovered";
+import GallerySection from "@/Components/UI/Gallery/GallerySection";
 import styles from "@/Components/Pages/GetFreeMovingQuotePage/GetFreeMovingQuotePage.module.scss";
 
 const cityName = "Whanganui";
@@ -161,6 +162,7 @@ export default function Page() {
         <GetFreeMovingQuotePage content={landingPageContent.hero} />
         <RegularProcess {...landingPageContent.process} />
         <LocationsCovered {...landingPageContent.locations} />
+        <GallerySection cityName={cityName} />
       </main>
       <Footer showFooterCta={false} content={landingPageContent.footer} />
     </div>
