@@ -5,7 +5,7 @@ import RegularProcess from "@/Components/UI/Layout/Sections/Process/RegularProce
 import LocationsCovered from "@/Components/UI/LocationsCovered/LocationsCovered";
 import styles from "@/Components/Pages/GetFreeMovingQuotePage/GetFreeMovingQuotePage.module.scss";
 
-const cityName = "Manawatū";
+const cityName = "Whanganui";
 
 const landingPageContent = {
   topBar: {

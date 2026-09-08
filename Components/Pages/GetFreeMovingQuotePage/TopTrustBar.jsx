@@ -9,22 +9,24 @@ import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import styles from "./GetFreeMovingQuotePage.module.scss";
 
-const topBarItems = [
-  { icon: <VerifiedOutlinedIcon sx={{ fontSize: 18 }} />, text: "4.9 Google Reviews" },
-  { icon: <ShieldOutlinedIcon sx={{ fontSize: 18 }} />, text: "WINZ Approved" },
-  { icon: <LocalShippingOutlinedIcon sx={{ fontSize: 18 }} />, text: "Full Transit Insurance" },
-];
+const ICONS = {
+  verified: VerifiedOutlinedIcon,
+  shield: ShieldOutlinedIcon,
+  truck: LocalShippingOutlinedIcon,
+  email: MailOutlineIcon,
+};
 
-const mobileSlides = [
-  ...topBarItems,
-  {
-    icon: <MailOutlineIcon sx={{ fontSize: 18 }} />,
-    text: process.env.NEXT_PUBLIC_EMAIL_ADDRESS,
-    href: `mailto:${process.env.NEXT_PUBLIC_EMAIL_ADDRESS}`,
-  },
-];
+export default function TopTrustBar({ items = [], email }) {
+  const resolvedEmail = email || process.env.NEXT_PUBLIC_EMAIL_ADDRESS;
+  const mobileSlides = resolvedEmail
+    ? [...items, { icon: "email", text: resolvedEmail, href: `mailto:${resolvedEmail}` }]
+    : items;
 
-export default function TopTrustBar() {
+  const renderIcon = (icon) => {
+    const Icon = ICONS[icon];
+    return Icon ? <Icon sx={{ fontSize: 18 }} /> : null;
+  };
+
   const [emblaRef] = useEmblaCarousel(
     {
       align: "center",
@@ -46,17 +48,19 @@ export default function TopTrustBar() {
       <Container maxWidth="xl" className={styles.topBarInner}>
         <div className={styles.topBarDesktop}>
           <div className={styles.topBarItems}>
-            {topBarItems.map((item) => (
+            {items.map((item) => (
               <div key={item.text} className={styles.topBarItem}>
-                {item.icon}
+                {renderIcon(item.icon)}
                 <span>{item.text}</span>
               </div>
             ))}
           </div>
-          <a href={`mailto:${process.env.NEXT_PUBLIC_EMAIL_ADDRESS}`} className={styles.topBarLink}>
-            <MailOutlineIcon sx={{ fontSize: 18 }} />
-            <span>{process.env.NEXT_PUBLIC_EMAIL_ADDRESS}</span>
-          </a>
+          {resolvedEmail ? (
+            <a href={`mailto:${resolvedEmail}`} className={styles.topBarLink}>
+              <MailOutlineIcon sx={{ fontSize: 18 }} />
+              <span>{resolvedEmail}</span>
+            </a>
+          ) : null}
         </div>
 
         <div className={`${styles.topBarMobile} embla`}>
@@ -65,7 +69,7 @@ export default function TopTrustBar() {
               {mobileSlides.map((item) => {
                 const content = (
                   <div className={styles.topBarMobileSlide}>
-                    {item.icon}
+                    {renderIcon(item.icon)}
                     <span>{item.text}</span>
                   </div>
                 );

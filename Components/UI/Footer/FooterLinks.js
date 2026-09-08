@@ -52,7 +52,7 @@ export const informationLinks = [
 
     { label: "Contact us", url: "/contact-us" },
   
-    { label: "Get a free quote", url: "/get-free-quote" },
+    { label: "Get a free quote", url: "#quote-form" },
     { label: "Privacy policy", url: "/privacy-policy" },
     { label: "Terms and conditions", url: "/terms-and-conditions" },
 ] 

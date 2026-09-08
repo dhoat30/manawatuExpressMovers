@@ -8,7 +8,10 @@ export default function Footer({
   footerCtaData,
   showFooterCta = true,
   contactInfo,
+  content = {},
 }) {
+  const { eyebrow, title, description, copyrightName } = content;
+
   return (
     <>
       {showFooterCta && (
@@ -24,13 +27,13 @@ export default function Footer({
           <div className={`${styles.footerWrapper}`}>
             <div className={`${styles.footerMessage}`}>
               <Typography component="p" variant="overline" className={`${styles.eyebrow}`}>
-                Manawatū Express
+                {eyebrow}
               </Typography>
               <Typography component="h2" variant="h5" className={`${styles.messageTitle}`}>
-                Ready for a smoother move?
+                {title}
               </Typography>
               <Typography component="p" variant="body1" className={`${styles.messageText}`}>
-                Talk to a local moving team for clear pricing, careful handling, and a stress-free moving day.
+                {description}
               </Typography>
             </div>
 
@@ -47,7 +50,7 @@ export default function Footer({
         </Container>
       </div>
       {/* copyright container */}
-      <Copyright />
+      <Copyright businessName={copyrightName} />
     </>
   );
 }

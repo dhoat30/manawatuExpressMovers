@@ -20,9 +20,18 @@ export const metadata = {
 };
 
 export default async function Page() {
+    const topBarContent = {
+        items: [
+            { icon: "verified", text: "4.9 Google Reviews" },
+            { icon: "shield", text: "WINZ Approved" },
+            { icon: "truck", text: "Full Transit Insurance" },
+        ],
+        email: process.env.NEXT_PUBLIC_EMAIL_ADDRESS,
+    };
+
     return (
         <>
-            <Header />
+            <Header topBarContent={topBarContent} />
             <main>
                 <ThankYou />
             </main>

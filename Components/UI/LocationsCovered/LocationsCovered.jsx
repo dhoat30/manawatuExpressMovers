@@ -6,8 +6,8 @@ import Container from "@mui/material/Container";
 import { Chip, Typography } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-const DEFAULT_CENTER = [-40.3564, 175.6111];
-const DEFAULT_ZOOM = 10;
+const FALLBACK_CENTER = [0, 0];
+const FALLBACK_ZOOM = 2;
 const CARTO_API_KEY = process.env.NEXT_PUBLIC_CARTO_API_KEY;
 const MAP_TILE_URL = CARTO_API_KEY
   ? `https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${encodeURIComponent(
@@ -18,57 +18,15 @@ const MAP_ATTRIBUTION = CARTO_API_KEY
   ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
   : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-const LOCATION_COORDINATES = {
-  "Palmerston North Central": [-40.3564, 175.6111],
-  Hokowhitu: [-40.3587, 175.6316],
-  Awapuni: [-40.3698, 175.5904],
-  Milson: [-40.3288, 175.6092],
-  "Kelvin Grove": [-40.3373, 175.6424],
-  Roslyn: [-40.3428, 175.6301],
-  "Terrace End": [-40.3512, 175.6358],
-  Takaro: [-40.3521, 175.5881],
-  "West End": [-40.3654, 175.6002],
-  Highbury: [-40.354, 175.5727],
-  Aokautere: [-40.3904, 175.6651],
-  Ashhurst: [-40.2942, 175.7544],
-  Feilding: [-40.2256, 175.5653],
-  Bunnythorpe: [-40.2803, 175.633],
-  Longburn: [-40.3869, 175.5507],
-  Linton: [-40.4277, 175.5834],
-  Sanson: [-40.2207, 175.4249],
-  Bulls: [-40.1742, 175.3845],
-  Whanganui: [-39.9301, 175.0479],
-};
-
-const FALLBACK_TITLE =
-  "<h2>Moving Services Across Manawatū &amp; Whanganui</h2>";
-const FALLBACK_DESCRIPTION =
-  "Manawatū Express Movers helps with house moves, apartment moves, office relocations, and furniture deliveries across Palmerston North, Manawatū, and Whanganui.";
-const FALLBACK_LOCATIONS = [
-  "Palmerston North Central",
-  "Hokowhitu",
-  "Awapuni",
-  "Milson",
-  "Kelvin Grove",
-  "Roslyn",
-  "Terrace End",
-  "Takaro",
-  "West End",
-  "Highbury",
-  "Aokautere",
-  "Ashhurst",
-  "Feilding",
-  "Bunnythorpe",
-  "Longburn",
-  "Linton",
-  "Sanson",
-  "Bulls",
-  "Whanganui",
-];
-
 function getLocationLabel(location) {
   if (typeof location === "string") return location;
   return location?.label || location?.location || location?.title || "";
+}
+
+function getLocationCoordinates(location) {
+  if (typeof location === "object" && Array.isArray(location?.coordinates)) {
+    return location.coordinates;
+  }
 }
 
 function stripHtml(html = "") {
@@ -78,7 +36,9 @@ function stripHtml(html = "") {
 export default function LocationsCovered({
   title,
   description,
-  locations,
+  locations = [],
+  mapCenter = FALLBACK_CENTER,
+  mapZoom = FALLBACK_ZOOM,
 }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -86,17 +46,29 @@ export default function LocationsCovered({
   const [activeLocation, setActiveLocation] = useState("");
   const [mapError, setMapError] = useState("");
 
-  const locationLabels = useMemo(() => {
-    const labels = ((locations && locations.length ? locations : FALLBACK_LOCATIONS) || [])
-      .map(getLocationLabel)
-      .map((label) => label.trim())
-      .filter(Boolean);
+  const locationItems = useMemo(() => {
+    const items = locations || [];
+    const seenLabels = new Set();
 
-    return [...new Set(labels)];
+    return items
+      .map((location) => {
+        const label = getLocationLabel(location).trim();
+        return {
+          label,
+          coordinates: getLocationCoordinates(location),
+        };
+      })
+      .filter(({ label }) => {
+        if (!label || seenLabels.has(label)) {
+          return false;
+        }
+        seenLabels.add(label);
+        return true;
+      });
   }, [locations]);
 
-  const resolvedTitle = title || FALLBACK_TITLE;
-  const resolvedDescription = description || FALLBACK_DESCRIPTION;
+  const resolvedTitle = title || "";
+  const resolvedDescription = description || "";
   const titleText = stripHtml(resolvedTitle);
   const hasHtmlTitle =
     typeof resolvedTitle === "string" && /<\/?[a-z][\s\S]*>/i.test(resolvedTitle);
@@ -114,8 +86,8 @@ export default function LocationsCovered({
         if (cancelled || !mapRef.current) return;
 
         map = leaflet.map(mapRef.current, {
-          center: DEFAULT_CENTER,
-          zoom: DEFAULT_ZOOM,
+          center: mapCenter,
+          zoom: mapZoom,
           zoomControl: true,
           zoomAnimation: false,
           scrollWheelZoom: false,
@@ -136,13 +108,12 @@ export default function LocationsCovered({
         });
         mapInstanceRef.current = map;
 
-        if (!locationLabels.length) return;
+        if (!locationItems.length) return;
 
         const nextMarkers = [];
         const bounds = [];
 
-        locationLabels.forEach((label) => {
-          const coordinates = LOCATION_COORDINATES[label];
+        locationItems.forEach(({ label, coordinates }) => {
           if (!coordinates) return;
 
           const marker = leaflet
@@ -186,7 +157,7 @@ export default function LocationsCovered({
       }
       mapInstanceRef.current = null;
     };
-  }, [locationLabels]);
+  }, [locationItems, mapCenter, mapZoom]);
 
   const handleLocationClick = (label) => {
     setActiveLocation(label);
@@ -232,7 +203,7 @@ export default function LocationsCovered({
           )}
 
           <ul className={`${styles.locationsWrapper} mt-16`}>
-            {locationLabels.map((label) => (
+            {locationItems.map(({ label }) => (
               <li key={label}>
                 <Chip
                   icon={<LocationOnIcon fontSize="small" />}

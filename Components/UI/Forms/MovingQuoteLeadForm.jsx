@@ -18,46 +18,36 @@ import { useClickIds } from "@/hooks/useClickIds";
 import { sendFormSubmissionToGoogleTagManager } from "@/utils/googleTagManager";
 import styles from "./MovingQuoteLeadForm.module.scss";
 
-const FORM_FIELDS = [
+const FIELD_DEFINITIONS = [
   {
     id: "pickUpAddress",
-    label: "Moving from",
     required: true,
-    errorMessage: "Please enter a valid pickup address",
     validation: (value) => typeof value === "string" && value.trim().length > 5,
   },
   {
     id: "dropOffAddress",
-    label: "Moving to",
     required: true,
-    errorMessage: "Please enter a valid drop-off address",
     validation: (value) => typeof value === "string" && value.trim().length > 5,
   },
   {
     id: "firstname",
-    label: "First name",
     type: "text",
     required: true,
     autoComplete: "given-name",
-    errorMessage: "First name should be at least 3 characters long",
     validation: (value) => typeof value === "string" && value.trim().length > 2,
   },
   {
     id: "email",
-    label: "Email address",
     type: "email",
     required: true,
     autoComplete: "email",
-    errorMessage: "Enter a valid email address",
     validation: (value) => /\S+@\S+\.\S+/.test(value || ""),
   },
   {
     id: "phone",
-    label: "Phone number",
     type: "tel",
     required: false,
     autoComplete: "tel",
-    errorMessage: "Please enter a valid New Zealand phone number",
     validation: (value) => {
       const cleanPhone = (value || "").replace(/[^0-9]/g, "");
       return cleanPhone.length > 6;
@@ -87,13 +77,18 @@ function isFieldValid(field, value) {
 }
 
 export default function MovingQuoteLeadForm({
-  formName = "Get a Free Moving Quote",
-  title = "Get Your Free Quote",
-  subtitle = "Takes 60 seconds. No obligation whatsoever.",
-  highlightText = "Efficient Stacking, Fewer Trips",
-  submitButtonText = "GET FREE QUOTE",
+  formName,
+  title,
+  subtitle,
+  highlightText,
+  submitButtonText,
   showPhoneCta = true,
-  footerNote = "Honest advice • Free Quote • No obligation",
+  phoneCtaText,
+  footerNote,
+  privacyNote,
+  errorMessage,
+  fieldContent,
+  successUrl = "/form-submitted/thank-you",
   className = "",
 }) {
   const router = useRouter();
@@ -105,9 +100,17 @@ export default function MovingQuoteLeadForm({
   const [isLoading, setIsLoading] = useState(false);
   const [googleAdsAddress, setGoogleAdsAddress] = useState(INITIAL_GOOGLE_ADDRESS);
 
+  const formFields = useMemo(
+    () =>
+      FIELD_DEFINITIONS.map((field) => ({
+        ...field,
+        ...(fieldContent?.[field.id] || {}),
+      })),
+    [fieldContent]
+  );
   const fieldsById = useMemo(
-    () => Object.fromEntries(FORM_FIELDS.map((field) => [field.id, field])),
-    []
+    () => Object.fromEntries(formFields.map((field) => [field.id, field])),
+    [formFields]
   );
 
   const handleChange = (id, value) => {
@@ -141,7 +144,7 @@ export default function MovingQuoteLeadForm({
   const validateForm = () => {
     const nextErrors = {};
 
-    FORM_FIELDS.forEach((field) => {
+    formFields.forEach((field) => {
       if (!isFieldValid(field, formData[field.id])) {
         nextErrors[field.id] = true;
       }
@@ -160,7 +163,7 @@ export default function MovingQuoteLeadForm({
 
     const parts = formData.firstname.trim().split(/\s+/);
     const firstName = parts[0] || "";
-    const formattedDate = dayjs().valueOf();
+    const formattedDate = dayjs().format("D MMM YYYY, h:mm A");
     const transactionId =
       typeof crypto !== "undefined" && crypto.randomUUID
         ? crypto.randomUUID()
@@ -255,7 +258,7 @@ Move Date: ${formattedDate}`,
 
         sendFormSubmissionToGoogleTagManager({
           eventName: "quote_form_submission",
-          formName: "Moving Quote",
+          formName,
           transactionId,
           conversionValue: 0,
           currency: "NZD",
@@ -273,7 +276,7 @@ Move Date: ${formattedDate}`,
           },
         });
 
-        router.push("/form-submitted/thank-you");
+        router.push(successUrl);
         return;
       }
 
@@ -292,6 +295,7 @@ Move Date: ${formattedDate}`,
       onSubmit={submitHandler}
       noValidate
       className={`${styles.formCard} ${className}`}
+      id="quote-form"
     >
       <Box className={styles.header}>
         <Typography variant="h4" component="h2" className={styles.title}>
@@ -311,7 +315,7 @@ Move Date: ${formattedDate}`,
 
       <Box className={styles.fields}>
         <Box className={styles.addressGrid}>
-          {FORM_FIELDS.slice(0, 2).map((field) => (
+          {formFields.slice(0, 2).map((field) => (
             <GoogleAutocomplete
               key={field.id}
               label={field.label}
@@ -342,7 +346,7 @@ Move Date: ${formattedDate}`,
           ))}
         </Box>
 
-        {FORM_FIELDS.slice(2).map((field) => (
+        {formFields.slice(2).map((field) => (
           <Input
             key={field.id}
             lightTheme={true}
@@ -376,7 +380,7 @@ Move Date: ${formattedDate}`,
             startIcon={<LocalPhoneIcon />}
             className={styles.phoneButton}
           >
-            Prefer to talk? {phoneNumber}
+            {phoneCtaText} {phoneNumber}
           </Button>
         ) : null}
 
@@ -389,13 +393,13 @@ Move Date: ${formattedDate}`,
         <Box className={styles.privacyNote}>
           <LockOutlinedIcon sx={{ fontSize: 18 }} />
           <Typography variant="body2" component="p">
-            Your details are safe & never shared
+            {privacyNote}
           </Typography>
         </Box>
 
         {error ? (
           <Alert sx={{ marginTop: "16px" }} severity="error">
-            Something went wrong. Please try again.
+            {errorMessage}
           </Alert>
         ) : null}
       </Box>

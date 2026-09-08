@@ -307,7 +307,7 @@ export default function ResponsiveNavbar(props) {
                   >
                     {desktopMenuItems}
                   </Box>
-                  <Link href="/get-free-moving-quote" className="quote-button">
+                  <Link href="#quote-form" className="quote-button">
                     <Button size="large" variant="contained">
                       GET FREE QUOTE
                     </Button>
@@ -354,7 +354,7 @@ export default function ResponsiveNavbar(props) {
             </IconButton>
           </DrawerHeader>
           <ul className="list-container">{mobileMenuItems}</ul>
-          <Link href="/" style={{ margin: "16px" }}>
+          <Link href="#quote-form" style={{ margin: "16px" }}>
             <Button
               size="large"
               variant="outlined"

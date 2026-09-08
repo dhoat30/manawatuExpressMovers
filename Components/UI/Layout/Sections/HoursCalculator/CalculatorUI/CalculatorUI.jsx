@@ -239,7 +239,7 @@ export default function CalculatorUI({
         </Typography>
       </div>
       <div className="block">
-      <Link href="/get-free-quote" className={"flex justify-center mt-8"}>
+      <Link href="#quote-form" className={"flex justify-center mt-8"}>
                         <Button variant="outlined">Get a fixed price quote</Button>
            </Link>
       </div>

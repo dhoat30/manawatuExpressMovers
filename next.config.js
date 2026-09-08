@@ -1,6 +1,6 @@
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-    (process.env.NODE_ENV === "production" ? "https://quote.boxandgomovers.co.nz" : "http://localhost:3000");
-    const siteName = "Box and Go Movers"
+    (process.env.NODE_ENV === "production" ? "www.manawatuexpressmovers.co.nz" : "http://localhost:3000");
+    const siteName = "Manawatu Express Movers";
 
 // bundle analyzer 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({

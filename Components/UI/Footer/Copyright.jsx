@@ -3,13 +3,13 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import React from "react";
 import styles from "./Footer.module.scss";
-export default function Copyright() {
+export default function Copyright({ businessName }) {
   return (
     <div className={`${styles.copyrightWrapper} pt-8 pb-8`} >
       <Container maxWidth="lg" className="content-wrapper">
         <div className="copyright-wrapper flex space-between flex-wrap gap-16">
         <Typography variant="body1" component="span" className="center-align">
-            © {new Date().getFullYear()} Manawatū Express Movers. All Rights Reserved. 
+            © {new Date().getFullYear()} {businessName}. All Rights Reserved. 
             </Typography>
           <a href="https://webduel.co.nz" rel="nofollow" target="_blank">
             <Typography variant="body1" component="div" className="center-align">

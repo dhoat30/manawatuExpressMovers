@@ -4,37 +4,18 @@ import Typography from "@mui/material/Typography";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import MovingQuoteLeadForm from "@/Components/UI/Forms/MovingQuoteLeadForm";
-import RegularProcess from "@/Components/UI/Layout/Sections/Process/RegularProcess";
 import styles from "./GetFreeMovingQuotePage.module.scss";
 
-const featureItems = [
-  "2 Men + Truck | $65/hr",
-  "No depot fee, pay on arrival",
-  "Packing & unpacking available",
-  "We can beat any quote by 10%",
-  "WINZ Quotes",
-  "Full transit insurance",
-];
+export default function GetFreeMovingQuotePage({ content }) {
+  const {
+    promoText,
+    title,
+    description,
+    features,
+    trustItems,
+    form,
+  } = content;
 
-const movingProcessSteps = [
-  {
-    title: "Tell Us About Your Move",
-    description:
-      "<p>Get in touch with your moving details, including where you’re moving from, where you’re moving to, and what needs to be moved.</p>",
-  },
-  {
-    title: "Receive a Clear Quote",
-    description:
-      "<p>Our team reviews your moving requirements and prepares a straightforward quote, so you know what to expect before moving day.</p>",
-  },
-  {
-    title: "Move Stress-Free",
-    description:
-      "<p>On moving day, our movers arrive prepared, handle your belongings with care, and complete the move efficiently from start to finish.</p>",
-  },
-];
-
-export default function GetFreeMovingQuotePage() {
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
@@ -42,22 +23,21 @@ export default function GetFreeMovingQuotePage() {
           <div className={styles.contentColumn}>
             <div className={styles.promoPill}>
               <span className={styles.promoDot} />
-              Price Beat Guarantee — We&apos;ll Beat Any Quote by 10%
+              {promoText}
             </div>
 
             <Typography variant="h1" component="h1" className={styles.title}>
-              Stress-Free House
+              {title.firstLine}
               <br />
-              Moves — Quote in <span>15 Minutes</span>
+              {title.secondLine} <span>{title.highlight}</span>
             </Typography>
 
             <Typography variant="h5" component="p" className={styles.description}>
-              <strong>Manawatū&apos;s trusted removalists.</strong> Professional team,
-              transparent pricing, and no hidden costs. Get a response within 15 minutes.
+              <strong>{description.lead}</strong> {description.body}
             </Typography>
 
             <div className={styles.featureGrid}>
-              {featureItems.map((item) => (
+              {features.map((item) => (
                 <div key={item} className={styles.featureItem}>
                   <CheckCircleIcon sx={{ fontSize: 22 }} />
                   <span>{item}</span>
@@ -66,44 +46,34 @@ export default function GetFreeMovingQuotePage() {
             </div>
 
             <div className={styles.trustPanel}>
-              <div className={styles.trustItem}>
-                <div className={styles.trustBadge}>
-                  <VerifiedUserOutlinedIcon sx={{ fontSize: 32 }} />
+              {trustItems.map((item) => (
+                <div className={styles.trustItem} key={item.label}>
+                  {item.image ? (
+                    <Image
+                      src={item.image.src}
+                      alt={item.image.alt}
+                      width={item.image.width}
+                      height={item.image.height}
+                    />
+                  ) : (
+                    <div className={styles.trustBadge}>
+                      <VerifiedUserOutlinedIcon sx={{ fontSize: 32 }} />
+                    </div>
+                  )}
+                  <div className={styles.trustItemText}>
+                    <span className={styles.trustLabel}>{item.label}</span>
+                    <p>{item.text}</p>
+                  </div>
                 </div>
-                <div className={styles.trustItemText}>
-                  <span className={styles.trustLabel}>NZ OWNED</span>
-                  <p>Professional Team</p>
-                </div>
-              </div>
-
-              <div className={styles.trustItem}>
-                <Image src="/winz-logo.png" alt="WINZ Approved" width={42} height={42} />
-                <div className={styles.trustItemText}>
-                  <span className={styles.trustLabel}>WINZ</span>
-                  <p>Approved</p>
-                </div>
-              </div>
-
-              <div className={styles.trustItem}>
-                <Image src="/google-logo.png" alt="Google Rating" width={38} height={38} />
-                <div className={styles.trustItemText}>
-                  <span className={styles.trustLabel}>GOOGLE RATING</span>
-                  <p>★★★★★ 4.9</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
           <div className={styles.formColumn}>
-            <MovingQuoteLeadForm />
+            <MovingQuoteLeadForm {...form} />
           </div>
         </Container>
       </section>
-
-      <RegularProcess
-        title="Our Simple Moving Process"
-        cards={movingProcessSteps}
-      />
     </div>
   );
 }
