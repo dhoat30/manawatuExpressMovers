@@ -49,7 +49,7 @@ export const getQuoteFormData = [
         id: 'phone',
         label: 'Phone number',
         type: 'tel',
-        required: false,
+        required: true,
         autoComplete: "tel",
         validation: value => {
             const cleanPhone = (value || '').replace(/[^0-9]/g, '');

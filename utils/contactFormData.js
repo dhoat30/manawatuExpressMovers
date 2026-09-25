@@ -16,7 +16,11 @@ export const contactFormData = [
     },
 
     {
-        id: 'phone', label: 'Phone', type: 'tel', required: false,
+        id: 'phone', label: 'Phone', type: 'tel', required: true, autoComplete: "tel", validation: value => {
+            const cleanPhone = (value || '').replace(/[^0-9]/g, '');
+            return cleanPhone.length > 6;
+        },
+        errorMessage: 'Please enter a valid New Zealand phone number'
     },
 
     {

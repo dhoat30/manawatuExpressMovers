@@ -29,7 +29,7 @@ const landingPageContent = {
       body: "Professional team, transparent pricing, and no hidden costs. Get a response within 15 minutes.",
     },
     features: [
-      "2 Men + Truck | $65/hr",
+      "2 Men + Truck | $65/hh",
       "No depot fee, pay on arrival",
       "Packing & unpacking available",
       "We can beat any quote by 10%",

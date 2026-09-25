@@ -46,7 +46,7 @@ const FIELD_DEFINITIONS = [
   {
     id: "phone",
     type: "tel",
-    required: false,
+    required: true,
     autoComplete: "tel",
     validation: (value) => {
       const cleanPhone = (value || "").replace(/[^0-9]/g, "");
